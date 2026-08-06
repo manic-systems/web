@@ -1,0 +1,148 @@
+---
+import Icon from '../components/Icon.astro';
+import Layout from '../layouts/Layout.astro';
+
+const GITHUB = 'https://github.com/manic-systems';
+const MATRIX = 'https://matrix.to/#/!PgiFmxgbsStqyxnoGH:amaanq.com?via=amaanq.com&via=lobotomise.me&via=matrix.org';
+const people = ['amaanq', 'faukah', 'max-privatevoid', 'NotAShelf'];
+
+// Descriptions summarize public READMEs. Projects retain their repository names.
+const groups = [
+  {
+    id: 'nix', title: 'Nix', detail: 'Evaluation / builds / deployment',
+    projects: [
+      { name: 'dix', desc: 'Compare Nix closures and deployment snapshots.' },
+      { name: 'circus', desc: 'Declarative CI, build agents, and a binary cache.', note: 'Work in progress' },
+      { name: 'cade', desc: 'Compose environments across project directories.' },
+      { name: 'ncro', desc: 'Route binary cache requests by upstream latency.' },
+      { name: 'tack', desc: 'TOML source pins with lazy fetching.' },
+      { name: 'evix', desc: 'Asynchronous Nix evaluation as a library.' },
+      { name: 'rom', desc: 'A terminal monitor for Nix builds.' },
+      { name: 'nixtopsy', desc: 'An interactive view of Nix closures.' },
+      { name: 'npr', desc: 'Track Nixpkgs pull requests across branches.' },
+      { name: 'nixploit', desc: 'Scan Nix packages for known vulnerabilities.' },
+    ],
+  },
+  {
+    id: 'systems', title: 'Systems', detail: 'Boot / services / infrastructure',
+    projects: [
+      { name: 'nixos-core', desc: 'Modular Rust utilities for NixOS boot and activation.' },
+      { name: 'custos', desc: 'USB device authorization daemon.' },
+      { name: 'watchdog', desc: 'Aggregate web analytics as Prometheus metrics.' },
+      { name: 'bagel', desc: 'HTTP proxy and SSH tarpit for unwanted scanners.' },
+    ],
+  },
+  {
+    id: 'shell', title: 'Shell', detail: 'Completions / interfaces / utilities',
+    projects: [
+      { name: 'inshellah', desc: 'Nushell completions from manpages and command help.' },
+      { name: 'xdg-utils.nu', desc: 'Desktop integration utilities in Nushell.' },
+      { name: 'climax', desc: 'Argument parsing, rendering, and terminal widgets.', note: 'Work in progress' },
+      { name: 'autonym', desc: 'Generate Nushell aliases interactively.' },
+      { name: 'gcl', desc: 'Keep Git and Jujutsu checkouts in predictable places.' },
+    ],
+  },
+  {
+    id: 'libraries', title: 'Libraries', detail: 'Parsing / WebAssembly',
+    projects: [
+      { name: 'knead', desc: 'KDL parsing and typed Rust decoding.' },
+      { name: 'nixon', desc: 'Nix expression parsing with C and WASM bindings.' },
+      { name: 'vela', desc: 'Post-link obfuscation for WebAssembly modules.' },
+    ],
+  },
+] as const;
+const total = groups.reduce((sum, group) => sum + group.projects.length, 0);
+const seed = 1984818481;
+let state = seed >>> 0;
+const cells = Array.from({ length: 48 }, (_, i) => {
+  state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+  return { x: (i % 12) * 6, y: Math.floor(i / 12) * 8, filled: state / 4294967296 > 0.4 };
+});
+---
+
+<Layout>
+  <a class="skip" href="#software">Skip to software</a>
+  <div class="site">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="manic.systems home">
+        <svg viewBox="0 0 1024 1024" fill="currentColor" aria-hidden="true">
+          <g transform="translate(512 512) scale(0.72) translate(-512 -512)">
+            <circle cx="300" cy="300" r="250" />
+            <path d="M50 974 724 50H974L300 974ZM352 560H602L974 974H724Z" />
+          </g>
+        </svg>
+        manic.systems
+      </a>
+      <nav class="outlinks" aria-label="Elsewhere">
+        <a href={GITHUB}><Icon name="github" /> GitHub <span aria-hidden="true">↗</span></a>
+        <a href={MATRIX}><Icon name="matrix" /> Matrix <span aria-hidden="true">↗</span></a>
+        <a class="sponsor-button" href="https://github.com/sponsors/manic-systems"><Icon name="sponsor" /> Sponsor <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <div class="layout">
+      <aside class="rail" aria-label="Organization and index">
+        <p class="rail-intro"><strong>Free &amp; open source.</strong> A small group maintaining software.</p>
+        <nav class="rail-nav" aria-label="Software areas">
+          <p class="rail-label"><Icon name="index" /> Index</p>
+          {groups.map((group) => <a href={`#${group.id}`}><span class="nav-label"><Icon name={group.id} /> {group.title}</span><span class="area-count">{String(group.projects.length).padStart(2, '0')}</span></a>)}
+        </nav>
+        <div class="people">
+          <p class="rail-label"><Icon name="people" /> People</p>
+          {people.map((person) => <a href={`https://github.com/${person}`}>{person} <span aria-hidden="true">↗</span></a>)}
+        </div>
+      </aside>
+
+      <main>
+        <div class="masthead">
+          <h1><span>manic.</span><span>systems</span></h1>
+          <div class="masthead-foot">
+            <p>Controlled failure</p>
+            <svg class="seed-mark" viewBox="0 0 72 32" aria-hidden="true" data-seed={seed}>
+              {cells.filter((cell) => cell.filled).map(({ x, y }) => <rect x={x} y={y} width="3" height="5" fill="currentColor" />)}
+            </svg>
+          </div>
+        </div>
+
+        <div class="index-head" id="software" tabindex="-1">
+          <h2>Software index</h2>
+          <p>{total} public projects</p>
+        </div>
+        {groups.map((group, i) => (
+          <section class="group" id={group.id} aria-labelledby={`${group.id}-title`}>
+            <div class="group-heading">
+              <h3 id={`${group.id}-title`}>{String(i + 1).padStart(2, '0')} / {group.title}</h3>
+              <p>{group.detail}</p>
+            </div>
+            <ul class="project-grid">
+              {group.projects.map((project) => (
+                <li>
+                  <a class="project-link" href={`${GITHUB}/${project.name}`}>
+                    <div class="project-title">
+                      <span class="project-name">{project.name}</span>
+                      <span class="project-arrow" aria-hidden="true">↗</span>
+                    </div>
+                    <p class="project-desc">{project.desc}</p>
+                    {'note' in project && <p class="project-note">[{project.note}]</p>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </main>
+    </div>
+
+    <div class="mobile-people">
+      <p class="rail-label"><Icon name="people" /> People</p>
+      <div class="people">
+        {people.map((person) => <a href={`https://github.com/${person}`}>{person} <span aria-hidden="true">↗</span></a>)}
+      </div>
+    </div>
+    <footer class="bottom">
+      <span>manic.systems</span>
+      <a href={`${GITHUB}?tab=repositories`}>All repositories ↗</a>
+      <a href="#software">Back to index ↑</a>
+    </footer>
+  </div>
+</Layout>

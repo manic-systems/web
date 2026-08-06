@@ -1,0 +1,32 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
+  "files": {
+    "includes": ["**", "!!**/dist", "!!**/.astro", "!!**/*.svg"]
+  },
+
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+
+  "linter": {
+    "enabled": true,
+    "includes": ["**", "!!**/dist", "!!**/.astro", "!!**/*.svg"],
+    "rules": {
+      "preset": "recommended"
+    }
+  },
+
+  "html": {
+    "experimentalFullSupportEnabled": true
+  },
+
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "all"
+    }
+  }
+}

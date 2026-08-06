@@ -1,0 +1,8 @@
+dist/
+node_modules/
+.astro/
+pnpm-debug.log*
+
+# Nix
+/.direnv
+result*
