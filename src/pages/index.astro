@@ -34,18 +34,18 @@ const groups = projectAreas.map((area) => ({
   .skip { position: absolute; inset-block-start: 12px; inset-inline-start: 24px; transform: translateY(-160%); padding: 12px 16px; background: var(--text); color: var(--bg); z-index: 2; }
   .skip:focus { transform: translateY(0); }
   /* Clip decoration that bleeds past the edges, like the masthead water, instead of scrolling sideways. */
-  .site { max-width: 1440px; margin-inline: auto; padding-inline: 48px; overflow-x: clip; }
+  .site { --gutter: 48px; max-width: 1440px; margin-inline: auto; padding-inline: var(--gutter); overflow-x: clip; }
   .layout { display: grid; grid-template-columns: 208px minmax(0, 1fr); column-gap: 64px; }
   main { min-width: 0; }
   @media (max-width: 1100px) {
-    .site { padding-inline: 32px; }
+    .site { --gutter: 32px; }
     .layout { grid-template-columns: 168px minmax(0, 1fr); column-gap: 40px; }
   }
   @media (max-width: 780px) {
-    .site { padding-inline: 24px; }
+    .site { --gutter: 24px; }
     .layout { grid-template-columns: minmax(0, 1fr); }
   }
   @media (max-width: 500px) {
-    .site { padding-inline: 20px; }
+    .site { --gutter: 20px; }
   }
 </style>
