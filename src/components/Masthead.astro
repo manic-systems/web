@@ -1,5 +1,6 @@
 ---
 import { bitmapSeed } from '../data/site';
+const lettering = ['manic.', 'systems'];
 
 let state = bitmapSeed >>> 0;
 const cells = Array.from({ length: 48 }, (_, i) => {
@@ -14,8 +15,9 @@ const cells = Array.from({ length: 48 }, (_, i) => {
 
 <div class="masthead">
   <h1>
-    <span>manic.</span>
-    <span>systems</span>
+    {lettering.map((line) => (
+      <span style={`--wave-steps: ${line.length * 12}`}>{line}</span>
+    ))}
   </h1>
   <div class="masthead-foot">
     <p>Controlled failure</p>
@@ -30,14 +32,22 @@ const cells = Array.from({ length: 48 }, (_, i) => {
 </div>
 
 <style>
-  .masthead { position: relative; padding-block: 32px 40px; }
+  .masthead { --wave-enabled: 0; position: relative; padding-block: 32px 40px; }
   h1 { font-family: Doto, var(--mono); font-size: min(8.3vw, 7.5rem); font-weight: 850; line-height: 1.1; letter-spacing: -0.045em; }
   h1 span { display: block; width: fit-content; }
   .masthead-foot { display: flex; justify-content: space-between; align-items: end; gap: 32px; margin-block-start: 24px; color: var(--muted); font-size: 0.8125rem; line-height: 1.6; }
   .seed-mark { width: 72px; height: 32px; flex-shrink: 0; color: var(--muted); }
+  @keyframes sweep-lettering {
+    from { background-position: 100% 0; }
+    to { background-position: 0% 0; }
+  }
   @media (prefers-reduced-motion: no-preference) {
     @supports (background-clip: text) {
       @media (forced-colors: none) {
+        .masthead { --wave-enabled: 1; }
+        .masthead.is-sweeping h1 span {
+          animation: sweep-lettering 4800ms steps(var(--wave-steps), end);
+        }
         h1 span {
           background-image: linear-gradient(90deg,
             var(--text) 0% 48%,
@@ -67,24 +77,23 @@ const cells = Array.from({ length: 48 }, (_, i) => {
 
 <script>
   const masthead = document.querySelector<HTMLElement>('.masthead');
-  const lettering = Array.from(document.querySelectorAll<HTMLSpanElement>('.masthead h1 span'));
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let hueAnimations: Animation[] = [];
+  const firstLine = masthead?.querySelector('h1 span');
 
-  // One short pass, replayable on hover, without resetting when the pointer leaves.
+  // CSS owns playback and accessibility gating; JS only requests one pass.
+
   function sweepLettering() {
-    if (reducedMotion.matches || !CSS.supports('background-clip', 'text') || hueAnimations.some((animation) => animation.playState === 'running')) return;
-    hueAnimations = lettering.map((line) => line.animate([
-      { backgroundPosition: '100% 0' },
-      { backgroundPosition: '0% 0' },
-    ], { duration: 4800, easing: `steps(${(line.textContent?.length ?? 1) * 12}, end)` }));
+    if (!masthead || masthead.classList.contains('is-sweeping')) return;
+    if (getComputedStyle(masthead).getPropertyValue('--wave-enabled').trim() !== '1') return;
+    masthead.classList.add('is-sweeping');
+  }
+
+  function clearSweep(event: AnimationEvent) {
+    // Both lines share timing; use one completion/cancellation signal.
+    if (event.target === firstLine) masthead?.classList.remove('is-sweeping');
   }
 
   masthead?.addEventListener('pointerenter', sweepLettering);
-  reducedMotion.addEventListener('change', () => {
-    if (reducedMotion.matches) {
-      for (const animation of hueAnimations) animation.cancel();
-    }
-  });
+  masthead?.addEventListener('animationend', clearSweep);
+  masthead?.addEventListener('animationcancel', clearSweep);
   document.fonts.ready.then(sweepLettering);
 </script>
