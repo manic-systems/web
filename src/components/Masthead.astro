@@ -1,6 +1,8 @@
 ---
 import { bitmapSeed } from '../data/site';
-const lettering = ['manic.', 'systems'];
+import { DOT_SIZE, LETTERING, TITLE } from '../lib/masthead/lettering';
+
+const dotInset = (1 - DOT_SIZE) / 2;
 
 let state = bitmapSeed >>> 0;
 const cells = Array.from({ length: 48 }, (_, i) => {
@@ -14,10 +16,25 @@ const cells = Array.from({ length: 48 }, (_, i) => {
 ---
 
 <div class="masthead">
+  <canvas class="water" aria-hidden="true"></canvas>
   <h1>
-    {lettering.map((line) => (
-      <span style={`--wave-steps: ${line.length * 12}`}>{line}</span>
-    ))}
+    <span class="visually-hidden">{TITLE}</span>
+    <svg
+      class="lettering"
+      viewBox={`0 0 ${LETTERING.cols} ${LETTERING.rows}`}
+      style={`width: calc(var(--pitch) * ${LETTERING.cols}); height: calc(var(--pitch) * ${LETTERING.rows})`}
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      {LETTERING.dots.map(([x, y]) => (
+        <rect
+          x={x + dotInset}
+          y={y + dotInset}
+          width={DOT_SIZE}
+          height={DOT_SIZE}
+        />
+      ))}
+    </svg>
   </h1>
   <div class="masthead-foot">
     <p>Controlled failure</p>
@@ -32,41 +49,54 @@ const cells = Array.from({ length: 48 }, (_, i) => {
 </div>
 
 <style>
-  .masthead { --wave-enabled: 0; position: relative; padding-block: 32px 40px; }
-  h1 { font-family: Doto, var(--mono); font-size: min(8.3vw, 7.5rem); font-weight: 850; line-height: 1.1; letter-spacing: -0.045em; }
-  h1 span { display: block; width: fit-content; }
+  /* One Doto dot pitch (0.1em of the former lettering size). */
+  .masthead { --pitch: min(0.83vw, 12px); --bleed: 3; --water-enabled: 0; position: relative; padding-block: 32px 40px; }
+  .masthead > :not(.water) { position: relative; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .masthead-foot { display: flex; justify-content: space-between; align-items: end; gap: 32px; margin-block-start: 24px; color: var(--muted); font-size: 0.8125rem; line-height: 1.6; }
   .seed-mark { width: 72px; height: 32px; flex-shrink: 0; color: var(--muted); }
-  @keyframes sweep-lettering {
-    from { background-position: 100% 0; }
-    to { background-position: 0% 0; }
+  /* The water bleeds --bleed dots past the masthead on every side and fades out there. */
+  .water {
+    --edge: calc(var(--pitch) * var(--bleed));
+    display: none;
+    position: absolute;
+    inset-block-start: calc(var(--edge) * -1);
+    inset-inline-start: calc(var(--edge) * -1);
+    width: calc(100% + var(--edge) * 2);
+    height: calc(100% + var(--edge) * 2);
+    pointer-events: none;
+    mask-image:
+      linear-gradient(
+        to right,
+        transparent,
+        #000 var(--edge),
+        #000 calc(100% - var(--edge)),
+        transparent
+      ),
+      linear-gradient(
+        to bottom,
+        transparent,
+        #000 var(--edge),
+        #000 calc(100% - var(--edge)),
+        transparent
+      );
+    mask-composite: intersect;
+  }
+  .masthead.has-water .water {
+    display: block;
+  }
+  .masthead.has-water .lettering {
+    visibility: hidden;
   }
   @media (prefers-reduced-motion: no-preference) {
-    @supports (background-clip: text) {
-      @media (forced-colors: none) {
-        .masthead { --wave-enabled: 1; }
-        .masthead.is-sweeping h1 span {
-          animation: sweep-lettering 4800ms steps(var(--wave-steps), end);
-        }
-        h1 span {
-          background-image: linear-gradient(90deg,
-            var(--text) 0% 48%,
-            var(--masthead-wave-1) 48% 49%,
-            var(--masthead-wave-2) 49% 50%,
-            var(--masthead-wave-3) 50% 51%,
-            var(--masthead-wave-4) 51% 52%,
-            var(--text) 52% 100%);
-          background-size: 300% 100%;
-          background-position: 100% 0;
-          background-clip: text;
-          color: transparent;
-        }
+    @media (forced-colors: none) {
+      .masthead {
+        --water-enabled: 1;
       }
     }
   }
   @media (max-width: 780px) {
-    .masthead { padding-block: 24px 32px; }
-    h1 { font-size: min(14vw, 7rem); }
+    .masthead { --pitch: min(1.4vw, 11.2px); padding-block: 24px 32px; }
     .masthead-foot { margin-block-start: 16px; }
   }
   @media (max-width: 500px) {
@@ -76,24 +106,19 @@ const cells = Array.from({ length: 48 }, (_, i) => {
 </style>
 
 <script>
-  const masthead = document.querySelector<HTMLElement>('.masthead');
-  const firstLine = masthead?.querySelector('h1 span');
+  import { Masthead } from "../lib/masthead/masthead";
 
-  // CSS owns playback and accessibility gating; JS only requests one pass.
+  const root = document.querySelector<HTMLElement>(".masthead");
+  const canvas = root?.querySelector<HTMLCanvasElement>(".water");
+  const letters = root?.querySelector<SVGSVGElement>(".lettering");
 
-  function sweepLettering() {
-    if (!masthead || masthead.classList.contains('is-sweeping')) return;
-    if (getComputedStyle(masthead).getPropertyValue('--wave-enabled').trim() !== '1') return;
-    masthead.classList.add('is-sweeping');
+  // CSS owns accessibility gating; the SVG lettering stays as the static fallback.
+  const enabled =
+    root &&
+    getComputedStyle(root).getPropertyValue("--water-enabled").trim() === "1";
+
+  if (root && canvas && letters && enabled) {
+    root.classList.add("has-water");
+    new Masthead(root, canvas, letters).start();
   }
-
-  function clearSweep(event: AnimationEvent) {
-    // Both lines share timing; use one completion/cancellation signal.
-    if (event.target === firstLine) masthead?.classList.remove('is-sweeping');
-  }
-
-  masthead?.addEventListener('pointerenter', sweepLettering);
-  masthead?.addEventListener('animationend', clearSweep);
-  masthead?.addEventListener('animationcancel', clearSweep);
-  document.fonts.ready.then(sweepLettering);
 </script>

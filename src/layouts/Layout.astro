@@ -17,19 +17,11 @@ const {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href="/fonts/doto-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/commit-mono-latin-400.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body><slot /></body>
 </html>
 <style is:global>
-  @font-face {
-    font-family: Doto;
-    src: url('/fonts/doto-latin-variable.woff2') format('woff2');
-    font-weight: 100 900;
-    font-style: normal;
-    font-display: swap;
-  }
   @font-face {
     font-family: 'Commit Mono';
     src: url('/fonts/commit-mono-latin-400.woff2') format('woff2');
@@ -48,6 +40,8 @@ const {
     --masthead-wave-2: #aaaaaa;
     --masthead-wave-3: #aaaaaa;
     --masthead-wave-4: #c8c8c8;
+    --masthead-tile: #3a3a3a;
+    --masthead-bird: #d8d2b8;
     --mono: 'Commit Mono', ui-monospace, monospace;
   }
   * { box-sizing: border-box; }
