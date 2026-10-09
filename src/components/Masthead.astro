@@ -37,7 +37,6 @@ const cells = Array.from({ length: 48 }, (_, i) => {
     </svg>
   </h1>
   <div class="masthead-foot">
-    <p>Controlled failure</p>
     <svg class="seed-mark" viewBox="0 0 72 32" aria-hidden="true" data-seed={bitmapSeed}>
       {cells
         .filter((cell) => cell.filled)
@@ -53,7 +52,7 @@ const cells = Array.from({ length: 48 }, (_, i) => {
   .masthead { --pitch: min(0.83vw, 12px); --bleed: 3; --water-enabled: 0; position: relative; padding-block: 32px 40px; }
   .masthead > :not(.water) { position: relative; }
   .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .masthead-foot { display: flex; justify-content: space-between; align-items: end; gap: 32px; margin-block-start: 24px; color: var(--muted); font-size: 0.8125rem; line-height: 1.6; }
+  .masthead-foot { display: flex; justify-content: end; margin-block-start: 24px; }
   .seed-mark { width: 72px; height: 32px; flex-shrink: 0; color: var(--muted); }
   /* The water bleeds --bleed dots past the masthead on every side and fades out there. */
   .water {
@@ -100,7 +99,6 @@ const cells = Array.from({ length: 48 }, (_, i) => {
     .masthead-foot { margin-block-start: 16px; }
   }
   @media (max-width: 500px) {
-    .masthead-foot { gap: 20px; }
     .seed-mark { width: 48px; }
   }
 </style>
