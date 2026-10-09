@@ -1,359 +1,50 @@
 ---
-import Icon from "../components/Icon.astro";
-import Layout from "../layouts/Layout.astro";
+import { getCollection } from 'astro:content';
+import Footer from '../components/Footer.astro';
+import Masthead from '../components/Masthead.astro';
+import OrganizationSidebar from '../components/OrganizationSidebar.astro';
+import ProjectIndex from '../components/ProjectIndex.astro';
+import Topbar from '../components/Topbar.astro';
+import { projectAreas } from '../data/projects';
+import Layout from '../layouts/Layout.astro';
 
-const GITHUB = "https://github.com/manic-systems";
-const MATRIX =
-  "https://matrix.to/#/!PgiFmxgbsStqyxnoGH:amaanq.com?via=amaanq.com&via=lobotomise.me&via=matrix.org";
-const people = [
-  "amaanq",
-  "atagen",
-  "faukah",
-  "max-privatevoid",
-  "NotAShelf",
-  "outfoxxed",
-  "pieter0101",
-  "WillLillis",
-];
-
-// Descriptions summarize public READMEs. Projects retain their repository names.
-const groups = [
-  {
-    id: "nix",
-    title: "Nix",
-    detail: "Evaluation / builds / deployment",
-    projects: [
-      { name: "dix", desc: "Compare Nix closures and deployment snapshots." },
-      {
-        name: "circus",
-        desc: "Declarative CI, build agents, and a binary cache.",
-        note: "Work in progress",
-      },
-      {
-        name: "cade",
-        desc: "Compose environments across project directories.",
-      },
-      {
-        name: "ncro",
-        desc: "Route binary cache requests by upstream latency.",
-      },
-      { name: "tack", desc: "TOML source pins with lazy fetching." },
-      { name: "evix", desc: "Asynchronous Nix evaluation as a library." },
-      { name: "rom", desc: "A terminal monitor for Nix builds." },
-      { name: "nixtopsy", desc: "An interactive view of Nix closures." },
-      { name: "npr", desc: "Track Nixpkgs pull requests across branches." },
-      {
-        name: "nixploit",
-        desc: "Scan Nix packages for known vulnerabilities.",
-      },
-    ],
-  },
-  {
-    id: "systems",
-    title: "Systems",
-    detail: "Boot / services / infrastructure",
-    projects: [
-      {
-        name: "nixos-core",
-        desc: "Modular Rust utilities for NixOS boot and activation.",
-      },
-      { name: "custos", desc: "USB device authorization daemon." },
-      {
-        name: "watchdog",
-        desc: "Aggregate web analytics as Prometheus metrics.",
-      },
-      {
-        name: "bagel",
-        desc: "HTTP proxy and SSH tarpit for unwanted scanners.",
-      },
-    ],
-  },
-  {
-    id: "shell",
-    title: "Shell",
-    detail: "Completions / interfaces / utilities",
-    projects: [
-      {
-        name: "inshellah",
-        desc: "Nushell completions from manpages and command help.",
-      },
-      {
-        name: "xdg-utils.nu",
-        desc: "Desktop integration utilities in Nushell.",
-      },
-      {
-        name: "climax",
-        desc: "Argument parsing, rendering, and terminal widgets.",
-        note: "Work in progress",
-      },
-      { name: "autonym", desc: "Generate Nushell aliases interactively." },
-      {
-        name: "gcl",
-        desc: "Keep Git and Jujutsu checkouts in predictable places.",
-      },
-    ],
-  },
-  {
-    id: "libraries",
-    title: "Libraries",
-    detail: "Parsing / WebAssembly",
-    projects: [
-      { name: "knead", desc: "KDL parsing and typed Rust decoding." },
-      {
-        name: "nixon",
-        desc: "Nix expression parsing with C and WASM bindings.",
-      },
-      { name: "vela", desc: "Post-link obfuscation for WebAssembly modules." },
-    ],
-  },
-] as const;
-const total = groups.reduce((sum, group) => sum + group.projects.length, 0);
-// GitHub organization creation date (UTC), encoded as YYYYMMDD: 2026-05-24.
-const seed = 20260524;
-let state = seed >>> 0;
-const cells = Array.from({ length: 48 }, (_, i) => {
-  state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
-  return {
-    x: (i % 12) * 6,
-    y: Math.floor(i / 12) * 8,
-    filled: state / 4294967296 > 0.4,
-  };
-});
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const groups = projectAreas.map((area) => ({
+  ...area,
+  projects: projects.filter((project) => project.data.area === area.id),
+}));
 ---
 
 <Layout>
-  <a class="skip" href="#software">
-    Skip to software
-  </a>
+  <a class="skip" href="#software">Skip to software</a>
   <div class="site">
-    <header class="topbar">
-      <a class="brand" href="/" aria-label="manic.systems home">
-        <svg viewBox="0 0 1024 1024" fill="currentColor" aria-hidden="true">
-          <g transform="translate(512 512) scale(0.72) translate(-512 -512)">
-            <circle class="brand-boulder" cx="300" cy="300" r="250" />
-            <path d="M50 974 724 50H974L300 974ZM352 560H602L974 974H724Z" />
-          </g>
-        </svg>
-        manic.systems
-      </a>
-      <nav class="outlinks" aria-label="Elsewhere">
-        <a href={GITHUB}>
-          <Icon name="github" /> GitHub <span aria-hidden="true">↗</span>
-        </a>
-        <a href={MATRIX}>
-          <Icon name="matrix" /> Matrix <span aria-hidden="true">↗</span>
-        </a>
-        <a
-          class="sponsor-button"
-          href="https://github.com/sponsors/manic-systems"
-        >
-          <Icon name="sponsor" /> Sponsor <span aria-hidden="true">↗</span>
-        </a>
-      </nav>
-    </header>
-
+    <Topbar />
     <div class="layout">
-      <aside class="rail" aria-label="Organization and index">
-        <p class="rail-intro">
-          <strong>Free &amp; open source.</strong> A small group maintaining
-          software. We create what we want to.
-        </p>
-        <nav class="rail-nav" aria-label="Software areas">
-          <p class="rail-label">
-            <Icon name="index" /> Index
-          </p>
-          {groups.map((group) => (
-            <a href={`#${group.id}`}>
-              <span class="nav-label">
-                <Icon name={group.id} /> {group.title}
-              </span>
-              <span class="area-count">
-                {String(group.projects.length).padStart(2, "0")}
-              </span>
-            </a>
-          ))}
-        </nav>
-        <div class="people">
-          <p class="rail-label">
-            <Icon name="people" /> People
-          </p>
-          {people.map((person) => (
-            <a href={`https://github.com/${person}`}>
-              {person} <span aria-hidden="true">↗</span>
-            </a>
-          ))}
-        </div>
-      </aside>
-
+      <OrganizationSidebar groups={groups} />
       <main>
-        <div class="masthead">
-          <h1>
-            <span>manic.</span>
-            <span>systems</span>
-          </h1>
-          <div class="masthead-foot">
-            <p>Controlled failure</p>
-            <svg
-              class="seed-mark"
-              viewBox="0 0 72 32"
-              aria-hidden="true"
-              data-seed={seed}
-            >
-              {cells
-                .filter((cell) => cell.filled)
-                .map(({ x, y }) => (
-                  <rect x={x} y={y} width="3" height="5" fill="currentColor" />
-                ))}
-            </svg>
-          </div>
-        </div>
-
-        <div class="index-head" id="software" tabindex="-1">
-          <h2>Software index</h2>
-          <p>{total} public projects</p>
-        </div>
-        {groups.map((group, i) => (
-          <section
-            class="group"
-            id={group.id}
-            aria-labelledby={`${group.id}-title`}
-          >
-            <div class="group-heading">
-              <h3 id={`${group.id}-title`}>
-                {String(i + 1).padStart(2, "0")} / {group.title}
-              </h3>
-              <p>{group.detail}</p>
-            </div>
-            <ul class="project-grid">
-              {group.projects.map((project) => (
-                <li>
-                  <a class="project-link" href={`${GITHUB}/${project.name}`}>
-                    <div class="project-title">
-                      <span class="project-name">{project.name}</span>
-                      <span class="project-arrow" aria-hidden="true">
-                        ↗
-                      </span>
-                    </div>
-                    <p class="project-desc">{project.desc}</p>
-                    {"note" in project && (
-                      <p class="project-note">[{project.note}]</p>
-                    )}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+        <Masthead />
+        <ProjectIndex groups={groups} />
       </main>
     </div>
-
-    <div class="mobile-people">
-      <p class="rail-label">
-        <Icon name="people" /> People
-      </p>
-      <div class="people">
-        {people.map((person) => (
-          <a href={`https://github.com/${person}`}>
-            {person} <span aria-hidden="true">↗</span>
-          </a>
-        ))}
-      </div>
-    </div>
-    <footer class="bottom">
-      <span>manic.systems</span>
-      <a href={`${GITHUB}?tab=repositories`}>All repositories ↗</a>
-      <a href="#software">Back to index ↑</a>
-    </footer>
+    <Footer />
   </div>
 </Layout>
 
-<script>
-  const brand = document.querySelector<HTMLAnchorElement>(".brand");
-  const boulder = document.querySelector<SVGCircleElement>(".brand-boulder");
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-  if (brand && boulder) {
-    const rock = boulder;
-    let animation: Animation | undefined;
-
-    // Preserve the rendered position before replacing an in-flight animation.
-    function stopAtCurrentPosition() {
-      const transform = getComputedStyle(rock).transform;
-      const progress =
-        transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41 / 160;
-      rock.style.transform = transform;
-      animation?.cancel();
-      return { transform, progress: Math.max(0, Math.min(1, progress)) };
-    }
-
-    function climb() {
-      if (reducedMotion.matches) return;
-      const { transform, progress } = stopAtCurrentPosition();
-      const ascent = 2400 * (1 - progress);
-      const pause = 250;
-      const descent = 800;
-      const duration = ascent + pause + descent;
-      animation = rock.animate(
-        [
-          { transform, offset: 0, easing: "linear" },
-          { transform: "translate(160px, -219px)", offset: ascent / duration },
-          {
-            transform: "translate(160px, -219px)",
-            offset: (ascent + pause) / duration,
-            easing: "cubic-bezier(0.4, 0, 1, 1)",
-          },
-          { transform: "translate(0, 0)", offset: 1 },
-        ],
-        { duration, fill: "forwards" },
-      );
-    }
-
-    function rollBack() {
-      const { transform, progress } = stopAtCurrentPosition();
-      if (reducedMotion.matches || progress === 0) {
-        rock.style.transform = "";
-        return;
-      }
-      animation = rock.animate(
-        [{ transform }, { transform: "translate(0, 0)" }],
-        {
-          duration: 800 * progress,
-          easing: "cubic-bezier(0.4, 0, 1, 1)",
-          fill: "forwards",
-        },
-      );
-    }
-
-    brand.addEventListener("pointerenter", climb);
-    brand.addEventListener("pointerleave", rollBack);
-    brand.addEventListener("focus", climb);
-    brand.addEventListener("blur", rollBack);
-    reducedMotion.addEventListener("change", () => {
-      if (reducedMotion.matches) {
-        animation?.cancel();
-        rock.style.transform = "";
-      }
-    });
+<style>
+  .skip { position: absolute; inset-block-start: 12px; inset-inline-start: 24px; transform: translateY(-160%); padding: 12px 16px; background: var(--text); color: var(--bg); z-index: 2; }
+  .skip:focus { transform: translateY(0); }
+  .site { max-width: 1440px; margin-inline: auto; padding-inline: 48px; }
+  .layout { display: grid; grid-template-columns: 208px minmax(0, 1fr); column-gap: 64px; }
+  main { min-width: 0; }
+  @media (max-width: 1100px) {
+    .site { padding-inline: 32px; }
+    .layout { grid-template-columns: 168px minmax(0, 1fr); column-gap: 40px; }
   }
-
-  const masthead = document.querySelector<HTMLElement>(".masthead");
-  const lettering = Array.from(document.querySelectorAll<HTMLSpanElement>(".masthead h1 span"));
-  let hueAnimations: Animation[] = [];
-
-  // One short pass, replayable on hover, without resetting when the pointer leaves.
-  function sweepLettering() {
-    if (reducedMotion.matches || !CSS.supports("background-clip", "text") || hueAnimations.some((animation) => animation.playState === "running")) return;
-    hueAnimations = lettering.map((line) => line.animate([
-      { backgroundPosition: "100% 0" },
-      { backgroundPosition: "0% 0" },
-    ], { duration: 4800, easing: `steps(${(line.textContent?.length ?? 1) * 12}, end)` }));
+  @media (max-width: 780px) {
+    .site { padding-inline: 24px; }
+    .layout { grid-template-columns: minmax(0, 1fr); }
   }
-
-  masthead?.addEventListener("pointerenter", sweepLettering);
-  reducedMotion.addEventListener("change", () => {
-    if (reducedMotion.matches) {
-      for (const animation of hueAnimations) animation.cancel();
-    }
-  });
-  document.fonts.ready.then(sweepLettering);
-</script>
+  @media (max-width: 500px) {
+    .site { padding-inline: 20px; }
+  }
+</style>

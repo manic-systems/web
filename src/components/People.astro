@@ -1,0 +1,31 @@
+---
+import Icon from './Icon.astro';
+import { people } from '../data/site';
+
+interface Props {
+  mobile?: boolean;
+}
+const { mobile = false } = Astro.props;
+---
+
+<div class:list={['people', { mobile }]}>
+  {!mobile && (
+    <p class="rail-label">
+      <Icon name="people" /> People
+    </p>
+  )}
+  {people.map((person) => (
+    <a href={`https://github.com/${person}`}>
+      {person} <span aria-hidden="true">↗</span>
+    </a>
+  ))}
+</div>
+
+<style>
+  .people a { display: block; width: fit-content; max-width: 100%; overflow-wrap: anywhere; min-height: 36px; padding-block: 8px; }
+  .people a:hover { text-decoration: underline; text-underline-offset: 5px; }
+  @media (max-width: 780px) {
+    .people { display: none; }
+    .people.mobile { display: flex; flex-wrap: wrap; gap: 4px 24px; }
+  }
+</style>

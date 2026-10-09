@@ -1,0 +1,136 @@
+[
+  {
+    "id": "dix",
+    "area": "nix",
+    "description": "Compare Nix closures and deployment snapshots.",
+    "order": 1
+  },
+  {
+    "id": "circus",
+    "area": "nix",
+    "description": "Declarative CI, build agents, and a binary cache.",
+    "order": 2,
+    "note": "Work in progress"
+  },
+  {
+    "id": "cade",
+    "area": "nix",
+    "description": "Compose environments across project directories.",
+    "order": 3
+  },
+  {
+    "id": "ncro",
+    "area": "nix",
+    "description": "Route binary cache requests by upstream latency.",
+    "order": 4
+  },
+  {
+    "id": "tack",
+    "area": "nix",
+    "description": "TOML source pins with lazy fetching.",
+    "order": 5
+  },
+  {
+    "id": "evix",
+    "area": "nix",
+    "description": "Asynchronous Nix evaluation as a library.",
+    "order": 6
+  },
+  {
+    "id": "rom",
+    "area": "nix",
+    "description": "A terminal monitor for Nix builds.",
+    "order": 7
+  },
+  {
+    "id": "nixtopsy",
+    "area": "nix",
+    "description": "An interactive view of Nix closures.",
+    "order": 8
+  },
+  {
+    "id": "npr",
+    "area": "nix",
+    "description": "Track Nixpkgs pull requests across branches.",
+    "order": 9
+  },
+  {
+    "id": "nixploit",
+    "area": "nix",
+    "description": "Scan Nix packages for known vulnerabilities.",
+    "order": 10
+  },
+  {
+    "id": "nixos-core",
+    "area": "systems",
+    "description": "Modular Rust utilities for NixOS boot and activation.",
+    "order": 11
+  },
+  {
+    "id": "custos",
+    "area": "systems",
+    "description": "USB device authorization daemon.",
+    "order": 12
+  },
+  {
+    "id": "watchdog",
+    "area": "systems",
+    "description": "Aggregate web analytics as Prometheus metrics.",
+    "order": 13
+  },
+  {
+    "id": "bagel",
+    "area": "systems",
+    "description": "HTTP proxy and SSH tarpit for unwanted scanners.",
+    "order": 14
+  },
+  {
+    "id": "inshellah",
+    "area": "shell",
+    "description": "Nushell completions from manpages and command help.",
+    "order": 15
+  },
+  {
+    "id": "xdg-utils.nu",
+    "area": "shell",
+    "description": "Desktop integration utilities in Nushell.",
+    "order": 16
+  },
+  {
+    "id": "climax",
+    "area": "shell",
+    "description": "Argument parsing, rendering, and terminal widgets.",
+    "order": 17,
+    "note": "Work in progress"
+  },
+  {
+    "id": "autonym",
+    "area": "shell",
+    "description": "Generate Nushell aliases interactively.",
+    "order": 18
+  },
+  {
+    "id": "gcl",
+    "area": "shell",
+    "description": "Keep Git and Jujutsu checkouts in predictable places.",
+    "order": 19
+  },
+  {
+    "id": "knead",
+    "area": "libraries",
+    "description": "KDL parsing and typed Rust decoding.",
+    "order": 20
+  },
+  {
+    "id": "nixon",
+    "area": "libraries",
+    "description": "Nix expression parsing with C and WASM bindings.",
+    "order": 21
+  },
+  {
+    "id": "vela",
+    "area": "libraries",
+    "description": "Post-link obfuscation for WebAssembly modules.",
+    "order": 22
+  }
+]

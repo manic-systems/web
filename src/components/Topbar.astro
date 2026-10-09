@@ -1,0 +1,117 @@
+---
+import Icon from './Icon.astro';
+import { github, matrix } from '../data/site';
+---
+
+<header class="topbar">
+  <a class="brand" href="/" aria-label="manic.systems home">
+    <svg viewBox="0 0 1024 1024" fill="currentColor" aria-hidden="true">
+      <g transform="translate(512 512) scale(0.72) translate(-512 -512)">
+        <circle class="brand-boulder" cx="300" cy="300" r="250" />
+        <path d="M50 974 724 50H974L300 974ZM352 560H602L974 974H724Z" />
+      </g>
+    </svg>
+    manic.systems
+  </a>
+  <nav class="outlinks" aria-label="Elsewhere">
+    <a href={github}>
+      <Icon name="github" /> GitHub <span aria-hidden="true">↗</span>
+    </a>
+    <a href={matrix}>
+      <Icon name="matrix" /> Matrix <span aria-hidden="true">↗</span>
+    </a>
+    <a class="sponsor-button" href="https://github.com/sponsors/manic-systems">
+      <Icon name="sponsor" /> Sponsor <span aria-hidden="true">↗</span>
+    </a>
+  </nav>
+</header>
+
+<style>
+  .topbar { min-height: 92px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-block-end: 1px solid var(--line); }
+  .brand { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; font-size: 0.875rem; }
+  .brand svg { width: 32px; height: 32px; }
+  .outlinks { display: flex; align-items: center; flex-wrap: wrap; gap: 28px; font-size: 0.8125rem; }
+  .outlinks a { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; }
+  .outlinks a:hover { text-decoration: underline; text-underline-offset: 5px; }
+  .outlinks .sponsor-button { padding-inline: 14px; border: 1px solid var(--muted); gap: 10px; }
+  .outlinks .sponsor-button:hover { background: var(--hover); border-color: var(--text); text-decoration: none; }
+  @media (max-width: 780px) {
+    .topbar { min-height: 76px; }
+  }
+  @media (max-width: 500px) {
+    .topbar { gap: 16px; flex-wrap: wrap; padding-block: 12px; }
+    .outlinks { gap: 20px; }
+    .brand { font-size: 0.8125rem; }
+    .brand svg { width: 26px; height: 26px; }
+  }
+</style>
+
+<script>
+  const brand = document.querySelector<HTMLAnchorElement>('.brand');
+  const boulder = document.querySelector<SVGCircleElement>('.brand-boulder');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (brand && boulder) {
+    const rock = boulder;
+    let animation: Animation | undefined;
+
+    // Preserve the rendered position before replacing an in-flight animation.
+    function stopAtCurrentPosition() {
+      const transform = getComputedStyle(rock).transform;
+      const progress =
+        transform === 'none' ? 0 : new DOMMatrixReadOnly(transform).m41 / 160;
+      rock.style.transform = transform;
+      animation?.cancel();
+      return { transform, progress: Math.max(0, Math.min(1, progress)) };
+    }
+
+    function climb() {
+      if (reducedMotion.matches) return;
+      const { transform, progress } = stopAtCurrentPosition();
+      const ascent = 2400 * (1 - progress);
+      const pause = 250;
+      const descent = 800;
+      const duration = ascent + pause + descent;
+      animation = rock.animate(
+        [
+          { transform, offset: 0, easing: 'linear' },
+          { transform: 'translate(160px, -219px)', offset: ascent / duration },
+          {
+            transform: 'translate(160px, -219px)',
+            offset: (ascent + pause) / duration,
+            easing: 'cubic-bezier(0.4, 0, 1, 1)',
+          },
+          { transform: 'translate(0, 0)', offset: 1 },
+        ],
+        { duration, fill: 'forwards' },
+      );
+    }
+
+    function rollBack() {
+      const { transform, progress } = stopAtCurrentPosition();
+      if (reducedMotion.matches || progress === 0) {
+        rock.style.transform = '';
+        return;
+      }
+      animation = rock.animate(
+        [{ transform }, { transform: 'translate(0, 0)' }],
+        {
+          duration: 800 * progress,
+          easing: 'cubic-bezier(0.4, 0, 1, 1)',
+          fill: 'forwards',
+        },
+      );
+    }
+
+    brand.addEventListener('pointerenter', climb);
+    brand.addEventListener('pointerleave', rollBack);
+    brand.addEventListener('focus', climb);
+    brand.addEventListener('blur', rollBack);
+    reducedMotion.addEventListener('change', () => {
+      if (reducedMotion.matches) {
+        animation?.cancel();
+        rock.style.transform = '';
+      }
+    });
+  }
+</script>

@@ -1,0 +1,72 @@
+---
+import type { ProjectGroup } from '../data/projects';
+import { github } from '../data/site';
+
+interface Props {
+  groups: ProjectGroup[];
+}
+const { groups } = Astro.props;
+const total = groups.reduce((sum, group) => sum + group.projects.length, 0);
+---
+
+<div class="index-head" id="software" tabindex="-1">
+  <h2>Software index</h2>
+  <p>{total} public projects</p>
+</div>
+{groups.map((group, i) => (
+  <section class="group" id={group.id} aria-labelledby={`${group.id}-title`}>
+    <div class="group-heading">
+      <h3 id={`${group.id}-title`}>
+        {String(i + 1).padStart(2, '0')} / {group.title}
+      </h3>
+      <p>{group.detail}</p>
+    </div>
+    <ul class="project-grid">
+      {group.projects.map(({ id, data }) => (
+        <li>
+          <a class="project-link" href={`${github}/${id}`}>
+            <div class="project-title">
+              <span class="project-name">{id}</span>
+              <span class="project-arrow" aria-hidden="true">↗</span>
+            </div>
+            <p class="project-desc">{data.description}</p>
+            {data.note && <p class="project-note">[{data.note}]</p>}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+))}
+
+<style>
+  .index-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-block: 18px; border-block: 1px solid var(--text); }
+  .index-head h2 { font-size: 0.875rem; font-weight: 400; }
+  .index-head p { font-size: 0.75rem; color: var(--muted); }
+  .group { padding-block: 32px 40px; scroll-margin-block-start: 24px; }
+  .group + .group { border-block-start: 1px solid var(--line); }
+  .group-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; margin-block-end: 24px; }
+  .group-heading h3 { font-size: 0.875rem; font-weight: 400; }
+  .group-heading p { font-size: 0.75rem; color: var(--muted); }
+  .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; row-gap: 8px; list-style: none; padding: 0; margin: 0; }
+  .project-link { display: block; padding: 14px 12px; margin-inline: -12px; min-height: 106px; }
+  .project-link:hover { background: var(--hover); }
+  .project-title { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-block-end: 9px; }
+  .project-name { font-size: 1.25rem; overflow-wrap: anywhere; }
+  .project-arrow { color: var(--muted); font-size: 0.875rem; }
+  .project-link:hover .project-name { text-decoration: underline; text-underline-offset: 5px; }
+  .project-link:hover .project-arrow { color: var(--text); }
+  .project-desc { color: var(--muted); font-size: 0.875rem; line-height: 1.6; max-width: 44ch; }
+  .project-note { font-size: 0.75rem; color: var(--muted); margin-block-start: 8px; }
+  @media (max-width: 1100px) {
+    .project-grid { column-gap: 24px; }
+  }
+  @media (max-width: 780px) {
+    .group { padding-block: 28px 32px; }
+  }
+  @media (max-width: 500px) {
+    .project-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .project-link { min-height: 0; padding-block: 16px; }
+    .group-heading { margin-block-end: 12px; }
+    .index-head p { font-size: 0.75rem; }
+  }
+</style>

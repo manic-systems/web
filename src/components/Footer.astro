@@ -1,0 +1,27 @@
+---
+import Icon from './Icon.astro';
+import People from './People.astro';
+import { github } from '../data/site';
+---
+
+<div class="mobile-people">
+  <p class="rail-label">
+    <Icon name="people" /> People
+  </p>
+  <People mobile />
+</div>
+<footer class="bottom">
+  <span>manic.systems</span>
+  <a href={`${github}?tab=repositories`}>All repositories ↗</a>
+  <a href="#software">Back to index ↑</a>
+</footer>
+
+<style>
+  .bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 32px; padding-block: 20px 28px; border-block-start: 1px solid var(--line); font-size: 0.75rem; color: var(--muted); }
+  .bottom a { display: inline-flex; align-items: center; min-height: 36px; }
+  .bottom a:hover { text-decoration: underline; text-underline-offset: 5px; }
+  .mobile-people { display: none; }
+  @media (max-width: 780px) {
+    .mobile-people { display: block; margin-block-end: 24px; padding-block-start: 24px; border-block-start: 1px solid var(--line); font-size: 0.8125rem; }
+  }
+</style>

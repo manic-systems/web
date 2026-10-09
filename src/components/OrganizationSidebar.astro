@@ -1,0 +1,52 @@
+---
+import Icon from './Icon.astro';
+import People from './People.astro';
+import type { ProjectGroup } from '../data/projects';
+
+interface Props {
+  groups: ProjectGroup[];
+}
+const { groups } = Astro.props;
+---
+
+<aside class="rail" aria-label="Organization and index">
+  <p class="rail-intro">
+    <strong>Free &amp; open source.</strong> A small group maintaining
+    software. We create what we want to.
+  </p>
+  <nav class="rail-nav" aria-label="Software areas">
+    <p class="rail-label">
+      <Icon name="index" /> Index
+    </p>
+    {groups.map((group) => (
+      <a href={`#${group.id}`}>
+        <span class="nav-label">
+          <Icon name={group.id} /> {group.title}
+        </span>
+        <span class="area-count">
+          {String(group.projects.length).padStart(2, '0')}
+        </span>
+      </a>
+    ))}
+  </nav>
+  <People />
+</aside>
+
+<style>
+  .rail { align-self: start; padding-block: 48px; font-size: 0.8125rem; line-height: 1.6; }
+  .rail-intro { max-width: 23ch; color: var(--muted); }
+  .rail-intro strong { display: block; color: var(--text); font-weight: 400; margin-block-end: 12px; }
+  .rail-nav { margin-block: 40px; }
+  .rail-nav a { display: flex; justify-content: space-between; gap: 12px; min-height: 40px; align-items: center; }
+  .rail-nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
+  .nav-label { display: inline-flex; align-items: center; gap: 10px; }
+  .rail-nav .area-count { color: var(--muted); font-variant-numeric: tabular-nums; }
+  @media (max-width: 780px) {
+    .rail { padding-block: 24px 0; }
+    .rail-intro { max-width: 60ch; }
+    .rail-intro strong { display: inline; margin: 0; }
+    .rail-nav { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-block: 20px 0; }
+    .rail-nav .rail-label { display: none; }
+    .rail-nav a { gap: 12px; }
+  }
+</style>

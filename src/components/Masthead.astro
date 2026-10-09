@@ -1,0 +1,90 @@
+---
+import { bitmapSeed } from '../data/site';
+
+let state = bitmapSeed >>> 0;
+const cells = Array.from({ length: 48 }, (_, i) => {
+  state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+  return {
+    x: (i % 12) * 6,
+    y: Math.floor(i / 12) * 8,
+    filled: state / 4294967296 > 0.4,
+  };
+});
+---
+
+<div class="masthead">
+  <h1>
+    <span>manic.</span>
+    <span>systems</span>
+  </h1>
+  <div class="masthead-foot">
+    <p>Controlled failure</p>
+    <svg class="seed-mark" viewBox="0 0 72 32" aria-hidden="true" data-seed={bitmapSeed}>
+      {cells
+        .filter((cell) => cell.filled)
+        .map(({ x, y }) => (
+          <rect x={x} y={y} width="3" height="5" fill="currentColor" />
+        ))}
+    </svg>
+  </div>
+</div>
+
+<style>
+  .masthead { position: relative; padding-block: 32px 40px; }
+  h1 { font-family: Doto, var(--mono); font-size: min(8.3vw, 7.5rem); font-weight: 850; line-height: 1.1; letter-spacing: -0.045em; }
+  h1 span { display: block; width: fit-content; }
+  .masthead-foot { display: flex; justify-content: space-between; align-items: end; gap: 32px; margin-block-start: 24px; color: var(--muted); font-size: 0.8125rem; line-height: 1.6; }
+  .seed-mark { width: 72px; height: 32px; flex-shrink: 0; color: var(--muted); }
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (background-clip: text) {
+      @media (forced-colors: none) {
+        h1 span {
+          background-image: linear-gradient(90deg,
+            var(--text) 0% 48%,
+            var(--masthead-wave-1) 48% 49%,
+            var(--masthead-wave-2) 49% 50%,
+            var(--masthead-wave-3) 50% 51%,
+            var(--masthead-wave-4) 51% 52%,
+            var(--text) 52% 100%);
+          background-size: 300% 100%;
+          background-position: 100% 0;
+          background-clip: text;
+          color: transparent;
+        }
+      }
+    }
+  }
+  @media (max-width: 780px) {
+    .masthead { padding-block: 24px 32px; }
+    h1 { font-size: min(14vw, 7rem); }
+    .masthead-foot { margin-block-start: 16px; }
+  }
+  @media (max-width: 500px) {
+    .masthead-foot { gap: 20px; }
+    .seed-mark { width: 48px; }
+  }
+</style>
+
+<script>
+  const masthead = document.querySelector<HTMLElement>('.masthead');
+  const lettering = Array.from(document.querySelectorAll<HTMLSpanElement>('.masthead h1 span'));
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let hueAnimations: Animation[] = [];
+
+  // One short pass, replayable on hover, without resetting when the pointer leaves.
+  function sweepLettering() {
+    if (reducedMotion.matches || !CSS.supports('background-clip', 'text') || hueAnimations.some((animation) => animation.playState === 'running')) return;
+    hueAnimations = lettering.map((line) => line.animate([
+      { backgroundPosition: '100% 0' },
+      { backgroundPosition: '0% 0' },
+    ], { duration: 4800, easing: `steps(${(line.textContent?.length ?? 1) * 12}, end)` }));
+  }
+
+  masthead?.addEventListener('pointerenter', sweepLettering);
+  reducedMotion.addEventListener('change', () => {
+    if (reducedMotion.matches) {
+      for (const animation of hueAnimations) animation.cancel();
+    }
+  });
+  document.fonts.ready.then(sweepLettering);
+</script>
