@@ -2,12 +2,12 @@
 const LINES = ['manic.', 'systems'];
 const ADVANCE = 6; // 5 dot columns plus a 1-dot gap
 const LINE_ROWS = 11; // line-height 1.1em
-const GLYPH_TOP = 2; // rows from a line's top to its glyphs' top row
+const GLYPH_ROWS = 9;
 export const DOT_SIZE = 0.8625; // Doto's dot size at weight 850, in pitches
 export const TITLE = LINES.join('');
 
 // Glyphs from Doto (SIL Open Font License) at weight 850; '#' is a dot.
-// Each is 5 columns by 9 rows: ascender, x-height (rows 2–6), descender.
+// Each is 5 columns by GLYPH_ROWS rows: ascender, x-height (rows 2–6), descender.
 const GLYPHS: Record<string, string[]> = {
   m: ['.....', '.....', '##.#.', '#.#.#', '#.#.#', '#.#.#', '#...#', '.....', '.....'],
   a: ['.....', '.....', '.###.', '....#', '.####', '#...#', '.####', '.....', '.....'],
@@ -41,7 +41,7 @@ const dots = LINES.flatMap((line, l) =>
   [...line].flatMap((char, i) =>
     GLYPHS[char].flatMap((art, row) =>
       [...art].flatMap((c, col): Dot[] =>
-        c === '#' ? [[i * ADVANCE + col, l * LINE_ROWS + GLYPH_TOP + row]] : [],
+        c === '#' ? [[i * ADVANCE + col, l * LINE_ROWS + row]] : [],
       ),
     ),
   ),
@@ -50,7 +50,8 @@ const lit = new Set(dots.map(([col, row]) => `${col},${row}`));
 
 export const LETTERING: Lettering = {
   cols: Math.max(...LINES.map((line) => line.length)) * ADVANCE - 1,
-  rows: LINES.length * LINE_ROWS,
+  // Tight to the ink: from the first line's ascender to the last line's descender.
+  rows: (LINES.length - 1) * LINE_ROWS + GLYPH_ROWS,
   dots,
   has: (col, row) => lit.has(`${col},${row}`),
 };

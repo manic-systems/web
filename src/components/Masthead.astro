@@ -1,6 +1,6 @@
 ---
-import { bitmapSeed } from '../data/site';
-import { DOT_SIZE, LETTERING, TITLE } from '../lib/masthead/lettering';
+import { bitmapSeed } from "../data/site";
+import { DOT_SIZE, LETTERING, TITLE } from "../lib/masthead/lettering";
 
 const dotInset = (1 - DOT_SIZE) / 2;
 
@@ -36,24 +36,50 @@ const cells = Array.from({ length: 48 }, (_, i) => {
       ))}
     </svg>
   </h1>
-  <div class="masthead-foot">
-    <svg class="seed-mark" viewBox="0 0 72 32" aria-hidden="true" data-seed={bitmapSeed}>
-      {cells
-        .filter((cell) => cell.filled)
-        .map(({ x, y }) => (
-          <rect x={x} y={y} width="3" height="5" fill="currentColor" />
-        ))}
-    </svg>
-  </div>
+  <svg
+    class="seed-mark"
+    viewBox="0 0 72 32"
+    aria-hidden="true"
+    data-seed={bitmapSeed}
+  >
+    {cells
+      .filter((cell) => cell.filled)
+      .map(({ x, y }) => (
+        <rect x={x} y={y} width="3" height="5" fill="currentColor" />
+      ))}
+  </svg>
 </div>
 
 <style>
   /* One Doto dot pitch (0.1em of the former lettering size). */
-  .masthead { --pitch: min(0.83vw, 12px); --bleed: 3; --water-enabled: 0; position: relative; padding-block: 32px 40px; }
-  .masthead > :not(.water) { position: relative; }
-  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .masthead-foot { display: flex; justify-content: end; margin-block-start: 24px; }
-  .seed-mark { width: 72px; height: 32px; flex-shrink: 0; color: var(--muted); }
+  .masthead {
+    --pitch: min(0.83vw, 12px);
+    --pad: 56px;
+    --bleed: 3;
+    --water-enabled: 0;
+    position: relative;
+    padding-block: var(--pad);
+  }
+  .masthead > :not(.water) {
+    position: relative;
+  }
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* The seed mark sits level with the lettering's last row, so it adds no height. */
+  .masthead > .seed-mark {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-end: var(--pad);
+    width: 72px;
+    height: 32px;
+    color: var(--muted);
+  }
   /* The water bleeds --bleed dots past the masthead on every side and fades out there. */
   .water {
     --edge: calc(var(--pitch) * var(--bleed));
@@ -95,11 +121,15 @@ const cells = Array.from({ length: 48 }, (_, i) => {
     }
   }
   @media (max-width: 780px) {
-    .masthead { --pitch: min(1.4vw, 11.2px); padding-block: 24px 32px; }
-    .masthead-foot { margin-block-start: 16px; }
+    .masthead {
+      --pitch: min(1.4vw, 11.2px);
+      --pad: 36px;
+    }
   }
   @media (max-width: 500px) {
-    .seed-mark { width: 48px; }
+    .masthead > .seed-mark {
+      width: 48px;
+    }
   }
 </style>
 
