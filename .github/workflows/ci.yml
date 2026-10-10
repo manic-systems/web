@@ -1,39 +1,53 @@
-name: "CI"
+name: CI
 
 on:
   push:
     branches: [main]
   pull_request:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  merge_group:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
+
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-        with:
-          persist-credentials: false
+    name: Build
+    permissions:
+      actions: write
+      contents: read
+    uses: manic-systems/workflows/.github/workflows/nix-checks.yml@b22b11dd6ae5da25aa9c82fcba380b05003af2dd # v2.1.2
+    with:
+      flake-check: false
+      build: true
+      build-command: nix build -L --no-link
+      cache: true
+      cache-save: true
+      cache-hash-files: |
+        **/*.nix
+        flake.lock
+        package.json
+        pnpm-lock.yaml
+        src/**
+        public/**
 
-      - name: Install Nix
-        uses: cachix/install-nix-action@b97f05dcb019ddea06450a50ef6203d2fdc19fee # v31
-        with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
-          extra_nix_config: |
-            experimental-features = nix-command flakes
+  lint:
+    name: Lint
+    uses: manic-systems/workflows/.github/workflows/nix-checks.yml@b22b11dd6ae5da25aa9c82fcba380b05003af2dd # v2.1.2
+    with:
+      flake-check: false
+      build: true
+      build-command: |
+        nix develop --command bash -euo pipefail -c '
+          pnpm install --frozen-lockfile
+          pnpm lint
+          pnpm run format:check
+        '
 
-      - name: Build with Nix
-        run: nix build -L
-
-      - name: Lint and format check
-        run: |
-          nix develop --command bash -euo pipefail -c '
-            pnpm install --frozen-lockfile
-            pnpm lint
-            pnpm run format:check
-          '
+  actions:
+    name: Actions Lint
+    uses: manic-systems/workflows/.github/workflows/actions-lint.yml@b22b11dd6ae5da25aa9c82fcba380b05003af2dd # v2.1.2
