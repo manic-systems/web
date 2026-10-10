@@ -2,65 +2,72 @@
   lib,
   stdenvNoCC,
   nodejs,
-  pnpm,
+  pnpm_12,
   pnpmConfigHook,
   fetchPnpmDeps,
-}:
-stdenvNoCC.mkDerivation (finalAttrs: {
-  pname = "manic-systems-web";
-  version = "0.1.0";
+}: let
+  pnpm' = pnpm_12;
+in
+  stdenvNoCC.mkDerivation (finalAttrs: {
+    pname = "manic-systems-web";
+    version = "0.1.0";
 
-  src = let
-    fs = lib.fileset;
-    sp = ../.;
-  in
-    fs.toSource {
-      root = sp;
+    src = let
+      fs = lib.fileset;
+      sp = ../.;
+    in
+      fs.toSource {
+        root = sp;
 
-      # Filter everything outside of what's specified here. Configuration files
-      # are good to include, but linter/formatter configs are not necessary.
-      fileset = fs.intersection (fs.fromSource (lib.sources.cleanSource sp)) (
-        fs.unions [
-          ../src
-          ../public
-          ../astro.config.ts
+        # Filter everything outside of what's specified here. Configuration files
+        # are good to include, but linter/formatter configs are not necessary.
+        fileset = fs.unions [
+          (sp + /src)
+          (sp + /public)
 
-          ../package.json
-          ../tsconfig.json
-          ../pnpm-lock.yaml
-          ../pnpm-workspace.yaml
-        ]
-      );
+          (sp + /package.json)
+          (sp + /pnpm-lock.yaml)
+          (sp + /pnpm-workspace.yaml)
+          (sp + /astro.config.ts)
+          (sp + /tsconfig.json)
+        ];
+      };
+
+    nativeBuildInputs = [
+      nodejs
+      pnpm'
+      pnpmConfigHook
+    ];
+
+    pnpmInstallFlags = ["--prod"];
+    pnpmDeps = fetchPnpmDeps {
+      pnpm = pnpm';
+      inherit (finalAttrs) pname version src pnpmInstallFlags;
+      fetcherVersion = 4; # https://nixos.org/manual/nixpkgs/stable/#javascript-pnpm-fetcherVersion
+      hash = "sha256-bO/QLNoyQt7+0BZGjuCRZa5DvdnKpq3a8Spov5W6fGk=";
     };
 
-  nativeBuildInputs = [
-    nodejs
-    pnpm
-    pnpmConfigHook
-  ];
+    buildPhase = ''
+      runHook preBuild
 
-  pnpmInstallFlags = ["--prod"];
-  pnpmDeps = fetchPnpmDeps {
-    inherit (finalAttrs) pname version src pnpmInstallFlags;
-    fetcherVersion = 4;
-    # Run `nix build` once after `pnpm install` to get the correct hash.
-    hash = "sha256-bO/QLNoyQt7+0BZGjuCRZa5DvdnKpq3a8Spov5W6fGk=";
-  };
+      pnpm build
 
-  buildPhase = ''
-    runHook preBuild
+      runHook postBuild
+    '';
 
-    pnpm build
+    installPhase = ''
+      runHook preInstall
 
-    runHook postBuild
-  '';
+      mkdir -p $out/share/web
+      cp -r dist/ $out/share/web
 
-  installPhase = ''
-    runHook preInstall
+      runHook postInstall
+    '';
 
-    mkdir -p $out/share/web
-    cp -r dist/ $out/share/web
-
-    runHook postInstall
-  '';
-})
+    meta = {
+      homepage = "https://github.com/manic-systems/web";
+      maintainers = [lib.maintainers.NotAShelf];
+      platforms = lib.platforms.linux ++ lib.platforms.darwin;
+      license = lib.licenses.eupl12;
+    };
+  })

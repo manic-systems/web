@@ -1,7 +1,7 @@
 {
   mkShellNoCC,
   nodejs,
-  pnpm,
+  pnpm_12,
   eslint_d,
   prettierd,
 }:
@@ -11,7 +11,7 @@ mkShellNoCC {
   strictDeps = true;
   nativeBuildInputs = [
     nodejs
-    pnpm
+    pnpm_12
 
     eslint_d
     prettierd
