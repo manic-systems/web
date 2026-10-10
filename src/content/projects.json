@@ -110,27 +110,21 @@
     "order": 18
   },
   {
-    "id": "gcl",
-    "area": "shell",
-    "description": "Keep Git and Jujutsu checkouts in predictable places.",
-    "order": 19
-  },
-  {
     "id": "knead",
     "area": "libraries",
     "description": "KDL parsing and typed Rust decoding.",
-    "order": 20
+    "order": 19
   },
   {
     "id": "nixon",
     "area": "libraries",
     "description": "Nix expression parsing with C and WASM bindings.",
-    "order": 21
+    "order": 20
   },
   {
     "id": "vela",
     "area": "libraries",
     "description": "Post-link obfuscation for WebAssembly modules.",
-    "order": 22
+    "order": 21
   }
 ]
