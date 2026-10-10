@@ -44,7 +44,7 @@ in
       pnpm = pnpm';
       inherit (finalAttrs) pname version src pnpmInstallFlags;
       fetcherVersion = 4; # https://nixos.org/manual/nixpkgs/stable/#javascript-pnpm-fetcherVersion
-      hash = "sha256-bO/QLNoyQt7+0BZGjuCRZa5DvdnKpq3a8Spov5W6fGk=";
+      hash = "sha256-yIVvzVqiSMkfTU2lO5BLR0OkY5uD1X+AMGIcz5x09YQ=";
     };
 
     # Doesn't do anything in the sandbox anyway, but we want it *gone*.
