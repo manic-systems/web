@@ -47,6 +47,9 @@ in
       hash = "sha256-bO/QLNoyQt7+0BZGjuCRZa5DvdnKpq3a8Spov5W6fGk=";
     };
 
+    # Doesn't do anything in the sandbox anyway, but we want it *gone*.
+    env.ASTRO_TELEMETRY_DISABLED = true;
+
     buildPhase = ''
       runHook preBuild
 
