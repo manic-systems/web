@@ -1,3 +1,10 @@
+supportedArchitectures:
+  os:
+    - linux
+  cpu:
+    - x64
+    - arm64
+
 allowBuilds:
   esbuild: true
   sharp: true
