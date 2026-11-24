@@ -1,7 +1,8 @@
 ---
 import Icon from './Icon.astro';
 import People from './People.astro';
-import { github } from '../data/site';
+import { github, matrix } from '../data/site';
+const year = new Date().getUTCFullYear();
 ---
 
 <div class="mobile-people">
@@ -11,17 +12,28 @@ import { github } from '../data/site';
   <People mobile />
 </div>
 <footer class="bottom">
-  <span>manic.systems</span>
-  <a href={`${github}?tab=repositories`}>All repositories ↗</a>
-  <a href="#software">Back to index ↑</a>
+  <nav class="quick-links" aria-label="Quick links">
+    <a href={github}>GitHub ↗</a>
+    <a href={matrix}>Matrix ↗</a>
+    <a href="https://github.com/sponsors/manic-systems">Sponsor ↗</a>
+    <a href={`${github}/web`}>Source ↗</a>
+  </nav>
+  <span class="copyright">© {year} manic.systems</span>
+  <a class="go-up" href="#top">Go up ↑</a>
 </footer>
 
 <style>
-  .bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 32px; padding-block: 20px 28px; border-block-start: 1px solid var(--line); font-size: 0.75rem; color: var(--muted); }
+  .bottom { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 12px 32px; padding-block: 20px 28px; border-block-start: 1px solid var(--line); font-size: 0.75rem; color: var(--muted); }
+  .quick-links { display: flex; flex-wrap: wrap; gap: 0 16px; }
+  .copyright { text-align: center; }
+  .go-up { justify-self: end; white-space: nowrap; }
   .bottom a { display: inline-flex; align-items: center; min-height: 36px; }
   .bottom a:hover { text-decoration: underline; text-underline-offset: 5px; }
   .mobile-people { display: none; }
   @media (max-width: 780px) {
+    .bottom { grid-template-columns: minmax(0, 1fr) auto; gap: 12px 20px; }
+    .copyright { grid-column: 1 / -1; grid-row: 2; }
+    .go-up { grid-column: 2; grid-row: 1; }
     .mobile-people { display: block; margin-block-end: 24px; padding-block-start: 24px; border-block-start: 1px solid var(--line); font-size: 0.8125rem; }
   }
 </style>
