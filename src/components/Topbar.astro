@@ -30,7 +30,7 @@ import { github, matrix } from '../data/site';
 </header>
 
 <style>
-  .topbar { --height: 92px; min-height: var(--height); display: flex; align-items: center; justify-content: space-between; gap: 24px; border-block-end: 1px solid var(--line); }
+  .topbar { position: sticky; inset-block-start: 0; z-index: 1; min-height: var(--topbar-height); display: flex; align-items: center; justify-content: space-between; gap: 24px; background: var(--bg); border-block-end: 1px solid var(--line); }
   .brand { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; font-size: 0.875rem; }
   .brand svg { width: 32px; height: 32px; }
   /* The links are a popover that only acts as one on narrow screens; undo its default styling. */
@@ -41,14 +41,11 @@ import { github, matrix } from '../data/site';
   .outlinks .sponsor-button:hover { background: var(--hover); border-color: var(--text); text-decoration: none; }
   .menu-toggle { display: none; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line); background: none; color: inherit; cursor: pointer; }
   .menu-toggle:hover { border-color: var(--text); }
-  @media (max-width: 780px) {
-    .topbar { --height: 76px; }
-  }
   /* Too narrow for the links in a row: fold them behind the menu button. */
   @media (max-width: 640px) {
     .menu-toggle { display: grid; }
     .outlinks:not(:popover-open) { display: none; }
-    .outlinks:popover-open { position: absolute; inset: var(--height) 0 auto; width: auto; flex-direction: column; align-items: stretch; gap: 0; padding: 8px var(--gutter) 24px; background: var(--bg); border-block-end: 1px solid var(--line); }
+    .outlinks:popover-open { position: fixed; inset: var(--topbar-height) 0 auto; width: auto; flex-direction: column; align-items: stretch; gap: 0; padding: 8px var(--gutter) 24px; background: var(--bg); border-block-end: 1px solid var(--line); }
     .outlinks .sponsor-button { margin-block-start: 8px; justify-content: center; }
   }
   @media (max-width: 500px) {
