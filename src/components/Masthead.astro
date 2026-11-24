@@ -136,17 +136,23 @@ const cells = Array.from({ length: 48 }, (_, i) => {
 <script>
   import { Masthead } from "../lib/masthead/masthead";
 
-  const root = document.querySelector<HTMLElement>(".masthead");
-  const canvas = root?.querySelector<HTMLCanvasElement>(".water");
-  const letters = root?.querySelector<SVGSVGElement>(".lettering");
+  function initialize() {
+    const root = document.querySelector<HTMLElement>(".masthead");
+    const canvas = root?.querySelector<HTMLCanvasElement>(".water");
+    const letters = root?.querySelector<SVGSVGElement>(".lettering");
 
-  // CSS owns accessibility gating; the SVG lettering stays as the static fallback.
-  const enabled =
-    root &&
-    getComputedStyle(root).getPropertyValue("--water-enabled").trim() === "1";
+    // CSS owns accessibility gating; the SVG lettering stays as the static fallback.
+    const enabled =
+      root &&
+      getComputedStyle(root).getPropertyValue("--water-enabled").trim() === "1";
 
-  if (root && canvas && letters && enabled) {
-    root.classList.add("has-water");
-    new Masthead(root, canvas, letters).start();
+    if (root && canvas && letters && enabled) {
+      root.classList.add("has-water");
+      new Masthead(root, canvas, letters).start();
+    }
   }
+
+  // Do not force style resolution while the document and stylesheets are loading.
+  if (document.readyState === "complete") initialize();
+  else window.addEventListener("load", initialize, { once: true });
 </script>
