@@ -1,6 +1,5 @@
 ---
 import Icon from '@/components/Icon.astro';
-import People from '@/components/People.astro';
 import type { ProjectGroup } from '@/data/projects';
 
 interface Props {
@@ -29,7 +28,7 @@ const { groups } = Astro.props;
       </a>
     ))}
   </nav>
-  <People />
+  <slot />
 </aside>
 
 <style>

@@ -1,0 +1,106 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Icon from '@/components/Icon.astro';
+import People from '@/components/People.astro';
+import { getMembers } from '@/data/users';
+import Layout from '@/layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const members = await getMembers();
+  return members.map((member) => ({
+    params: { member: member.id },
+    props: { member, members },
+  }));
+}
+
+interface Props {
+  member: CollectionEntry<'users'>;
+  members: readonly CollectionEntry<'users'>[];
+}
+
+const { member, members } = Astro.props;
+const { github, name, links, sponsorship } = member.data;
+const { Content } = await render(member);
+---
+
+<Layout
+  title={`${github} · manic.systems`}
+  description={`Profile of ${name ?? github}, a member of manic.systems.`}
+>
+  <main>
+    <a class="back" href="/"><span aria-hidden="true">←</span> Back to home</a>
+    <article>
+      <header>
+        <p class="rail-label"><Icon name="people" /> People</p>
+        <h1>{github}</h1>
+        {name && <p class="name">{name}</p>}
+        <nav class="links" aria-label="Member links">
+          <ul>
+            <li>
+              <a href={`https://github.com/${github}`}>
+                <Icon name="github" /> GitHub @{github}
+              </a>
+            </li>
+            {links.map(({ label, url }) => (
+              <li><a href={url}><Icon name="link" /> {label}</a></li>
+            ))}
+            {sponsorship && (
+              <li><a href={sponsorship}><Icon name="sponsor" /> Sponsor</a></li>
+            )}
+          </ul>
+        </nav>
+      </header>
+      <div class="bio"><Content /></div>
+    </article>
+  </main>
+  <People slot="before-footer" members={members} mobile />
+</Layout>
+
+<style>
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 64ch;
+    margin-inline: auto;
+    padding-block: 32px 72px;
+  }
+  .back, .links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    font-size: 0.875rem;
+  }
+  .back {
+    margin-block-end: 24px;
+    color: var(--muted);
+  }
+  h1 {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 400;
+    overflow-wrap: anywhere;
+  }
+  .name {
+    margin-block-start: 8px;
+    color: var(--muted);
+  }
+  .bio {
+    margin-block-start: 24px;
+    line-height: 1.7;
+  }
+  .bio :global(p + p) { margin-block-start: 1em; }
+  .bio :global(a), .back:hover, .links a:hover {
+    text-decoration: underline;
+    text-underline-offset: 5px;
+  }
+  .links ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 20px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .links li { max-width: 100%; }
+  .links a { overflow-wrap: anywhere; }
+</style>

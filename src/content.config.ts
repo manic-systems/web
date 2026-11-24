@@ -18,4 +18,16 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { projects };
+const publicUrl = z.url({ protocol: /^https?$/ });
+const users = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/users' }),
+  schema: z.object({
+    github: z.string().regex(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/),
+    order: z.number().int().positive(),
+    name: z.string().min(1).optional(),
+    links: z.array(z.object({ label: z.string().min(1), url: publicUrl })).default([]),
+    sponsorship: publicUrl.optional(),
+  }),
+});
+
+export const collections = { projects, users };

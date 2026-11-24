@@ -1,14 +1,14 @@
 ---
 import { getCollection } from 'astro:content';
-import Footer from '@/components/Footer.astro';
 import Masthead from '@/components/Masthead.astro';
 import OrganizationSidebar from '@/components/OrganizationSidebar.astro';
+import People from '@/components/People.astro';
 import ProjectIndex from '@/components/ProjectIndex.astro';
-import Topbar from '@/components/Topbar.astro';
 import { projectAreas } from '@/data/projects';
+import { getMembers } from '@/data/users';
 import Layout from '@/layouts/Layout.astro';
 
-const projects = await getCollection('projects');
+const [projects, members] = await Promise.all([getCollection('projects'), getMembers()]);
 projects.sort((a, b) => {
   const aOrder = a.data.order ?? Infinity;
   const bOrder = b.data.order ?? Infinity;
@@ -21,36 +21,28 @@ const groups = projectAreas.map((area) => ({
 ---
 
 <Layout>
-  <a class="skip" href="#software">Skip to software</a>
-  <div class="site" id="top">
-    <Topbar />
-    <div class="layout">
-      <OrganizationSidebar groups={groups} />
-      <main>
-        <Masthead />
-        <ProjectIndex groups={groups} />
-      </main>
-    </div>
-    <Footer />
+  <a slot="before-header" class="skip" href="#software">Skip to software</a>
+  <div class="layout">
+    <OrganizationSidebar groups={groups}>
+      <People members={members} />
+    </OrganizationSidebar>
+    <main>
+      <Masthead />
+      <ProjectIndex groups={groups} />
+    </main>
   </div>
+  <People slot="before-footer" members={members} mobile />
 </Layout>
 
 <style>
   .skip { position: absolute; inset-block-start: 12px; inset-inline-start: 24px; transform: translateY(-160%); padding: 12px 16px; background: var(--text); color: var(--bg); z-index: 2; }
   .skip:focus { transform: translateY(0); }
-  /* Clip decoration that bleeds past the edges, like the masthead water, instead of scrolling sideways. */
-  .site { --gutter: 48px; max-width: 1440px; margin-inline: auto; padding-inline: var(--gutter); overflow-x: clip; }
   .layout { display: grid; grid-template-columns: 208px minmax(0, 1fr); column-gap: 64px; }
   main { min-width: 0; }
   @media (max-width: 1100px) {
-    .site { --gutter: 32px; }
     .layout { grid-template-columns: 168px minmax(0, 1fr); column-gap: 40px; }
   }
   @media (max-width: 780px) {
-    .site { --gutter: 24px; }
     .layout { grid-template-columns: minmax(0, 1fr); }
-  }
-  @media (max-width: 500px) {
-    .site { --gutter: 20px; }
   }
 </style>
