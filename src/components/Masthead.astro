@@ -1,6 +1,6 @@
 ---
-import { bitmapSeed } from "../data/site";
-import { DOT_SIZE, LETTERING, TITLE } from "../lib/masthead/lettering";
+import { bitmapSeed } from "@/data/site";
+import { DOT_SIZE, LETTERING, TITLE } from "@/lib/masthead/lettering";
 
 const dotInset = (1 - DOT_SIZE) / 2;
 
@@ -134,7 +134,7 @@ const cells = Array.from({ length: 48 }, (_, i) => {
 </style>
 
 <script>
-  import { Masthead } from "../lib/masthead/masthead";
+  import { Masthead } from "@/lib/masthead/masthead";
 
   function initialize() {
     const root = document.querySelector<HTMLElement>(".masthead");

@@ -1,12 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
-import Footer from '../components/Footer.astro';
-import Masthead from '../components/Masthead.astro';
-import OrganizationSidebar from '../components/OrganizationSidebar.astro';
-import ProjectIndex from '../components/ProjectIndex.astro';
-import Topbar from '../components/Topbar.astro';
-import { projectAreas } from '../data/projects';
-import Layout from '../layouts/Layout.astro';
+import Footer from '@/components/Footer.astro';
+import Masthead from '@/components/Masthead.astro';
+import OrganizationSidebar from '@/components/OrganizationSidebar.astro';
+import ProjectIndex from '@/components/ProjectIndex.astro';
+import Topbar from '@/components/Topbar.astro';
+import { projectAreas } from '@/data/projects';
+import Layout from '@/layouts/Layout.astro';
 
 const projects = await getCollection('projects');
 projects.sort((a, b) => {
