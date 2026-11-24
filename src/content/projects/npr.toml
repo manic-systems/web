@@ -1,0 +1,4 @@
+area = "nix"
+description = "A pull request tracker for Nixpkgs"
+order = 9
+archived = true

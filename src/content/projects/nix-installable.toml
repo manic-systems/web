@@ -1,0 +1,2 @@
+area = "other"
+description = "A library for parsing and argument rendering for Nix installables."

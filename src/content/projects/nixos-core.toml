@@ -1,0 +1,3 @@
+area = "systems"
+description = "Core NixOS utilities in safe, portable Rust for NixOS and friends"
+order = 11

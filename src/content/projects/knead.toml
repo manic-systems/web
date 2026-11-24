@@ -1,0 +1,3 @@
+area = "libraries"
+description = "A KDL parser and typed decoder"
+order = 19

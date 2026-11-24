@@ -1,0 +1,2 @@
+area = "other"
+description = "Rust error reports with compile-time-selected formatting"

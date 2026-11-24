@@ -26,8 +26,9 @@ const total = groups.reduce((sum, group) => sum + group.projects.length, 0);
               <span class="project-name">{id}</span>
               <span class="project-arrow" aria-hidden="true">↗</span>
             </div>
-            <p class="project-desc">{data.description}</p>
+            {data.description && <p class="project-desc">{data.description}</p>}
             {data.note && <p class="project-note">[{data.note}]</p>}
+            {data.archived && <p class="project-note">[Archived]</p>}
           </a>
         </li>
       ))}

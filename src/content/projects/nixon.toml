@@ -1,0 +1,3 @@
+area = "libraries"
+description = "Fast and tiny Nix expression parser with C and WASM bindings"
+order = 20

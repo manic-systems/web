@@ -1,0 +1,3 @@
+area = "nix"
+description = "Nix vulnerability scanning"
+order = 10

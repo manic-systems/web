@@ -1,0 +1,2 @@
+area = "other"
+description = "Pure-Rust Nix binary-cache and store primitives"

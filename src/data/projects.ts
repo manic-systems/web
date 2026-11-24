@@ -5,6 +5,7 @@ export const projectAreas = [
   { id: 'systems', title: 'Systems' },
   { id: 'shell', title: 'Shell' },
   { id: 'libraries', title: 'Libraries' },
+  { id: 'other', title: 'Other' },
 ] as const;
 
 export type ProjectGroup = (typeof projectAreas)[number] & {

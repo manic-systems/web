@@ -1,0 +1,3 @@
+area = "nix"
+description = "A flamboyant output monitor for the Nix build tool"
+order = 7

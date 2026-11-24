@@ -1,0 +1,3 @@
+area = "nix"
+description = "A blazingly fast tool to diff Nix related things"
+order = 1

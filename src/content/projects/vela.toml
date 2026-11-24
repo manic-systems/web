@@ -1,0 +1,3 @@
+area = "libraries"
+description = "A post-link obfuscator for WebAssembly modules"
+order = 21

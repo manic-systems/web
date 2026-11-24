@@ -1,0 +1,3 @@
+area = "nix"
+description = "Interactively dissect your Nix closures"
+order = 8
