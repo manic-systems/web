@@ -1,4 +1,7 @@
 ---
+import Footer from '@/components/Footer.astro';
+import Topbar from '@/components/Topbar.astro';
+
 interface Props { title?: string; description?: string; }
 const {
   title = 'manic.systems',
@@ -18,7 +21,15 @@ const {
     <meta property="og:type" content="website" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
-  <body><slot /></body>
+  <body>
+    <slot name="before-header" />
+    <div class="site-shell" id="top">
+      <Topbar />
+      <slot />
+      <slot name="before-footer" />
+      <Footer />
+    </div>
+  </body>
 </html>
 <style is:global>
   @font-face {
@@ -47,6 +58,17 @@ const {
   * { box-sizing: border-box; }
   html { background: var(--bg); color: var(--text); font-family: var(--mono); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-padding-block-start: calc(var(--topbar-height) + 24px); }
   body { margin: 0; }
+  .site-shell {
+    --gutter: 48px;
+    display: flex;
+    flex-direction: column;
+    max-width: 1440px;
+    min-height: 100vh;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    /* Decorative bleed must not introduce horizontal scrolling. */
+    overflow-x: clip;
+  }
   a { color: inherit; text-decoration: none; }
   svg { display: block; }
   h1, h2, h3, p { margin: 0; }
@@ -54,8 +76,15 @@ const {
   :focus-visible { outline: 2px solid var(--text); outline-offset: 5px; }
   ::selection { color: var(--bg); background: var(--text); }
   .rail-label { display: flex; align-items: center; gap: 10px; margin-block-end: 12px; color: var(--muted); font-size: 0.75rem; }
+  @media (max-width: 1100px) {
+    .site-shell { --gutter: 32px; }
+  }
   @media (max-width: 780px) {
     :root { --topbar-height: 76px; }
+    .site-shell { --gutter: 24px; }
+  }
+  @media (max-width: 500px) {
+    .site-shell { --gutter: 20px; }
   }
   @media (prefers-reduced-motion: no-preference) {
     html { scroll-behavior: smooth; }

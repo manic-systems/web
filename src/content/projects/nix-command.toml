@@ -1,0 +1,2 @@
+area = "other"
+description = "A schema-driven builder API for constructing and running `nix` subcommands."

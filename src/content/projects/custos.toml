@@ -1,0 +1,3 @@
+area = "systems"
+description = "A small and simple USB authorization daemon."
+order = 12

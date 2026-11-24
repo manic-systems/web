@@ -1,0 +1,3 @@
+area = "nix"
+description = "a full-featured nix pinning system"
+order = 5

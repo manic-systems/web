@@ -1,0 +1,3 @@
+area = "shell"
+description = "Modern and compatible xdg-utils replacement powered by Nushell"
+order = 16

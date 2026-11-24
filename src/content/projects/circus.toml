@@ -1,0 +1,4 @@
+area = "nix"
+description = "Declarative Nix CI system for clowns"
+order = 2
+note = "Work in progress"

@@ -1,0 +1,3 @@
+area = "shell"
+description = "the last word in nushell completions."
+order = 15

@@ -1,31 +1,38 @@
 ---
-import Icon from './Icon.astro';
-import { people } from '../data/site';
+import type { CollectionEntry } from 'astro:content';
+import Icon from '@/components/Icon.astro';
 
 interface Props {
+  members: readonly CollectionEntry<'users'>[];
   mobile?: boolean;
 }
-const { mobile = false } = Astro.props;
+const { members, mobile = false } = Astro.props;
 ---
 
 <div class:list={['people', { mobile }]}>
-  {!mobile && (
-    <p class="rail-label">
-      <Icon name="people" /> People
-    </p>
-  )}
-  {people.map((person) => (
-    <a href={`https://github.com/${person}`}>
-      {person} <span aria-hidden="true">↗</span>
-    </a>
-  ))}
+  <p class="rail-label"><Icon name="people" /> People</p>
+  <div class="member-links">
+    {members.map(({ id, data }) => (
+      <a href={`/members/${id}`}>
+        {data.github} <span aria-hidden="true">→</span>
+      </a>
+    ))}
+  </div>
 </div>
 
 <style>
   .people a { display: block; width: fit-content; max-width: 100%; overflow-wrap: anywhere; min-height: 36px; padding-block: 8px; }
   .people a:hover { text-decoration: underline; text-underline-offset: 5px; }
+  .mobile { display: none; }
   @media (max-width: 780px) {
     .people { display: none; }
-    .people.mobile { display: flex; flex-wrap: wrap; gap: 4px 24px; }
+    .mobile {
+      display: block;
+      margin-block-end: 24px;
+      padding-block-start: 24px;
+      border-block-start: 1px solid var(--line);
+      font-size: 0.8125rem;
+    }
+    .member-links { display: flex; flex-wrap: wrap; gap: 4px 24px; }
   }
 </style>

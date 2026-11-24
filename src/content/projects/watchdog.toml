@@ -1,0 +1,3 @@
+area = "systems"
+description = "Lightweight, privacy-first analytics system with fully declarative configuration"
+order = 13

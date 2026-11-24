@@ -1,0 +1,2 @@
+area = "other"
+description = "Nix external builder running Linux derivations in a Virtualization.framework VM"

@@ -1,0 +1,3 @@
+area = "nix"
+description = "Library-first async Nix evaluation engine for fast cached eval distribution"
+order = 6

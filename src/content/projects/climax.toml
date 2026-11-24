@@ -1,0 +1,4 @@
+area = "shell"
+description = "max your CLI."
+order = 17
+note = "Work in progress"
